@@ -33,6 +33,67 @@ describe('sup', () => {
 	});
 });
 
+describe('kbd with attributes', () => {
+	test('adds HTML attributes', () => {
+		expect(kbd('Enter', { title: 'Press Enter' })).toBe('<kbd title="Press Enter">Enter</kbd>');
+	});
+
+	test('adds multiple attributes', () => {
+		expect(kbd('Ctrl', {
+			id: 'key-ctrl',
+			class: 'shortcut',
+		})).toBe(
+			'<kbd id="key-ctrl" class="shortcut">Ctrl</kbd>',
+		);
+	});
+
+	test('empty options treated as no options', () => {
+		expect(kbd('Enter', {})).toBe('<kbd>Enter</kbd>');
+	});
+
+	test('escapes HTML in attribute values', () => {
+		expect(kbd('Enter', { title: 'a"b' })).toBe('<kbd title="a&quot;b">Enter</kbd>');
+	});
+});
+
+describe('sub with attributes', () => {
+	test('adds HTML attributes', () => {
+		expect(sub('2', { title: 'subscript' })).toBe('<sub title="subscript">2</sub>');
+	});
+
+	test('adds multiple attributes', () => {
+		expect(sub('2', {
+			id: 'sub-2',
+			class: 'math',
+		})).toBe(
+			'<sub id="sub-2" class="math">2</sub>',
+		);
+	});
+
+	test('empty options treated as no options', () => {
+		expect(sub('2', {})).toBe('<sub>2</sub>');
+	});
+});
+
+describe('sup with attributes', () => {
+	test('adds HTML attributes', () => {
+		expect(sup('n', { title: 'exponent' })).toBe('<sup title="exponent">n</sup>');
+	});
+
+	test('adds multiple attributes', () => {
+		expect(sup('n', {
+			id: 'sup-n',
+			class: 'math',
+		})).toBe(
+			'<sup id="sup-n" class="math">n</sup>',
+		);
+	});
+
+	test('empty options treated as no options', () => {
+		expect(sup('n', {})).toBe('<sup>n</sup>');
+	});
+});
+
 describe('mention', () => {
 	test('basic username', () => {
 		expect(mention('octocat')).toBe('@octocat');

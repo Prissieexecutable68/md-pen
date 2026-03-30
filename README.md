@@ -256,7 +256,7 @@ footnoteRef('1') // [^1]
 footnote('1', 'Source') // [^1]: Source
 ```
 
-#### `details(summary, content)`
+#### `details(summary, content, options?)`
 
 Collapsible section. Summary is HTML-escaped, content supports markdown.
 
@@ -268,21 +268,31 @@ details('Click to expand', 'Hidden **markdown** here')
 // Hidden **markdown** here
 //
 // </details>
+
+details('Expanded', 'Visible', { open: '' })
+// <details open="">
+// <summary>Expanded</summary>
+//
+// Visible
+//
+// </details>
 ```
 
 ### Niche
 
-#### `kbd(key)`
+#### `kbd(key, options?)`
 
 ```ts
 kbd('Ctrl') // <kbd>Ctrl</kbd>
+kbd('Enter', { title: 'Confirm' }) // <kbd title="Confirm">Enter</kbd>
 ```
 
-#### `sub(text)` / `sup(text)`
+#### `sub(text, options?)` / `sup(text, options?)`
 
 ```ts
 sub('2') // <sub>2</sub>
 sup('n') // <sup>n</sup>
+sub('2', { title: 'subscript' }) // <sub title="subscript">2</sub>
 ```
 
 #### `math(expression)` / `mathBlock(expression)`

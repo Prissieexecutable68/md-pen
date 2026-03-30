@@ -19,6 +19,24 @@ export const escapeHtml = (text: string) => text.replaceAll(
 	character => htmlEntityMap[character],
 );
 
+const sanitizeAttributeName = (name: string) => name.replaceAll(/[\s"'>/=<]/g, '');
+
+export const htmlAttributes = (
+	attributes?: Record<string, string | number>,
+) => {
+	if (!attributes) {
+		return '';
+	}
+	let result = '';
+	for (const [key, value] of Object.entries(attributes)) {
+		const name = sanitizeAttributeName(key);
+		if (name.length > 0) {
+			result += ` ${name}="${escapeHtml(String(value))}"`;
+		}
+	}
+	return result;
+};
+
 export const escapeTableCell = (text: string) => {
 	// Escape | for table structure, handling \| (backslash before pipe) in one pass
 	let result = text.replaceAll(

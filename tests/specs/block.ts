@@ -46,6 +46,35 @@ describe('details', () => {
 	});
 });
 
+describe('details with attributes', () => {
+	test('adds open attribute', () => {
+		expect(details('Summary', 'Content', { open: '' })).toBe(
+			'<details open="">\n<summary>Summary</summary>\n\nContent\n\n</details>',
+		);
+	});
+
+	test('adds multiple attributes', () => {
+		expect(details('Summary', 'Content', {
+			id: 'faq',
+			class: 'collapsible',
+		})).toBe(
+			'<details id="faq" class="collapsible">\n<summary>Summary</summary>\n\nContent\n\n</details>',
+		);
+	});
+
+	test('empty options treated as no options', () => {
+		expect(details('Summary', 'Content', {})).toBe(
+			'<details>\n<summary>Summary</summary>\n\nContent\n\n</details>',
+		);
+	});
+
+	test('escapes HTML in attribute values', () => {
+		expect(details('Summary', 'Content', { id: 'a"b' })).toBe(
+			'<details id="a&quot;b">\n<summary>Summary</summary>\n\nContent\n\n</details>',
+		);
+	});
+});
+
 describe('details content injection', () => {
 	test('</details> in content does not close block early', () => {
 		const html = render(details('sum', '</details>\nout'));

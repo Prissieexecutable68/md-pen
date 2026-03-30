@@ -103,6 +103,7 @@ taskList([[true, 'Done'], [false, 'Todo']])
 ```ts
 alert('warning', 'Be careful')     // > [!WARNING]\n> Be careful
 details('Summary', 'Content')       // <details><summary>...</summary>...</details>
+details('S', 'C', { open: '' })     // <details open="">...</details>
 footnoteRef('1')                    // [^1]
 footnote('1', 'Source text')        // [^1]: Source text
 ```
@@ -111,8 +112,10 @@ footnote('1', 'Source text')        // [^1]: Source text
 
 ```ts
 kbd('Ctrl')          // <kbd>Ctrl</kbd>
+kbd('Enter', { title: 'Confirm' })  // <kbd title="Confirm">Enter</kbd>
 sub('2')             // <sub>2</sub>
 sup('n')             // <sup>n</sup>
+sub('2', { title: 'subscript' })    // <sub title="subscript">2</sub>
 math('E = mc^2')     // $E = mc^2$
 mathBlock('\\sum')   // $$\n\\sum\n$$
 mermaid('graph TD')  // ```mermaid\ngraph TD\n```

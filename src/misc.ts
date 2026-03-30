@@ -1,10 +1,18 @@
-import { escapeHtml } from './escape.ts';
+import { escapeHtml, htmlAttributes } from './escape.ts';
 
-export const kbd = (key: string) => `<kbd>${escapeHtml(key)}</kbd>`;
+type HtmlOptions = Record<string, string | number>;
 
-export const sub = (text: string) => `<sub>${escapeHtml(text)}</sub>`;
+const htmlTag = (
+	tag: string,
+	content: string,
+	options?: HtmlOptions,
+) => `<${tag}${htmlAttributes(options)}>${escapeHtml(content)}</${tag}>`;
 
-export const sup = (text: string) => `<sup>${escapeHtml(text)}</sup>`;
+export const kbd = (key: string, options?: HtmlOptions) => htmlTag('kbd', key, options);
+
+export const sub = (text: string, options?: HtmlOptions) => htmlTag('sub', text, options);
+
+export const sup = (text: string, options?: HtmlOptions) => htmlTag('sup', text, options);
 
 export const mention = (username: string) => `@${username}`;
 

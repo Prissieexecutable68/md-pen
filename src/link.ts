@@ -1,19 +1,4 @@
-import { escapeHtml, escapeUrl } from './escape.ts';
-
-const sanitizeAttributeName = (name: string) => name.replaceAll(/[\s"'>/=<]/g, '');
-
-const htmlAttributes = (
-	attributes: Record<string, string | number>,
-) => {
-	let result = '';
-	for (const [key, value] of Object.entries(attributes)) {
-		const name = sanitizeAttributeName(key);
-		if (name.length > 0) {
-			result += ` ${name}="${escapeHtml(String(value))}"`;
-		}
-	}
-	return result;
-};
+import { escapeHtml, escapeUrl, htmlAttributes } from './escape.ts';
 
 const hasOnlyTitle = (
 	options: Record<string, string | number>,
