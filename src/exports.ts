@@ -12,5 +12,5 @@ export { hr, details } from './block.ts';
 export { math, mathBlock } from './math.ts';
 export { footnoteRef, footnote } from './footnote.ts';
 export {
-	kbd, sub, sup, mention, emoji,
+	kbd, sub, sup, mention, emoji, el,
 } from './misc.ts';

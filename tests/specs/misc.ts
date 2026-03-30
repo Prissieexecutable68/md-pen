@@ -1,6 +1,6 @@
 import { describe, test, expect } from 'manten';
 import {
-	kbd, sub, sup, mention, emoji,
+	kbd, sub, sup, mention, emoji, el,
 } from '../../src/misc.ts';
 
 describe('kbd', () => {
@@ -91,6 +91,43 @@ describe('sup with attributes', () => {
 
 	test('empty options treated as no options', () => {
 		expect(sup('n', {})).toBe('<sup>n</sup>');
+	});
+});
+
+describe('el', () => {
+	test('void element without attributes', () => {
+		expect(el('br')).toBe('<br />');
+	});
+
+	test('void element with attributes', () => {
+		expect(el('img', {
+			src: 'cat.png',
+			alt: 'Cat',
+		})).toBe('<img src="cat.png" alt="Cat" />');
+	});
+
+	test('element with content', () => {
+		expect(el('div', undefined, '# Title')).toBe('<div># Title</div>');
+	});
+
+	test('element with attributes and content', () => {
+		expect(el('div', { align: 'center' }, '# Title')).toBe('<div align="center"># Title</div>');
+	});
+
+	test('content is raw (not escaped)', () => {
+		expect(el('div', undefined, '**bold** & <em>italic</em>')).toBe('<div>**bold** & <em>italic</em></div>');
+	});
+
+	test('escapes HTML in attribute values', () => {
+		expect(el('div', { title: 'a"b' }, 'text')).toBe('<div title="a&quot;b">text</div>');
+	});
+
+	test('empty attributes treated as no attributes', () => {
+		expect(el('div', {}, 'text')).toBe('<div>text</div>');
+	});
+
+	test('empty string content produces closing tag', () => {
+		expect(el('div', undefined, '')).toBe('<div></div>');
 	});
 });
 

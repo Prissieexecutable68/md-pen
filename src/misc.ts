@@ -14,6 +14,17 @@ export const sub = (text: string, options?: HtmlOptions) => htmlTag('sub', text,
 
 export const sup = (text: string, options?: HtmlOptions) => htmlTag('sup', text, options);
 
+export const el = (
+	tag: string,
+	attributes?: HtmlOptions,
+	content?: string,
+) => {
+	if (content === undefined) {
+		return `<${tag}${htmlAttributes(attributes)} />`;
+	}
+	return `<${tag}${htmlAttributes(attributes)}>${content}</${tag}>`;
+};
+
 export const mention = (username: string) => `@${username}`;
 
 export const emoji = (name: string) => `:${name}:`;

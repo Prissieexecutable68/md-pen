@@ -123,6 +123,16 @@ mention('octocat')   // @octocat
 emoji('rocket')      // :rocket:
 ```
 
+### Generic HTML Element
+
+```ts
+el('br')                                    // <br />
+el('img', { src: 'cat.png', alt: 'Cat' })   // <img src="cat.png" alt="Cat" />
+el('p', { align: 'center' }, 'centered')    // <p align="center">centered</p>
+```
+
+Content is raw (not escaped). Without content, self-closing.
+
 ### Escaping
 
 ```ts

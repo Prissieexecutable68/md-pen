@@ -328,6 +328,22 @@ mention('octocat') // @octocat
 emoji('rocket') // :rocket:
 ```
 
+### Generic
+
+#### `el(tag, attributes?, content?)`
+
+Generic HTML element builder for tags without a dedicated function. Attribute values are HTML-escaped and attribute names are sanitized against injection. Content is raw (not escaped). Without content, produces a self-closing tag.
+
+```ts
+el('br') // <br />
+el('img', {
+    src: 'cat.png',
+    alt: 'A cat'
+}) // <img src="cat.png" alt="A cat" />
+el('p', { align: 'center' }, 'centered text')
+// <p align="center">centered text</p>
+```
+
 ### Escaping
 
 #### `escape(text)`
