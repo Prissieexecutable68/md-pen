@@ -1,0 +1,165 @@
+import { describe, test, expect } from 'manten';
+import { render } from '../utils/render.ts';
+import { ul, ol, taskList } from '../../src/list.ts';
+import { bold } from '../../src/emphasis.ts';
+
+describe('ul', () => {
+	test('basic flat list', () => {
+		expect(ul(['a', 'b', 'c'])).toBe('- a\n- b\n- c');
+	});
+
+	test('nested list', () => {
+		expect(ul(['a', 'b', ['nested 1', 'nested 2'], 'c'])).toBe(
+			'- a\n- b\n  - nested 1\n  - nested 2\n- c',
+		);
+	});
+
+	test('deeply nested list', () => {
+		expect(ul(['a', ['b', ['c']]])).toBe('- a\n  - b\n    - c');
+	});
+
+	test('sub-array at index 0 treated as top-level items', () => {
+		expect(ul([['a', 'b']])).toBe('- a\n- b');
+	});
+
+	test('empty array', () => {
+		expect(ul([])).toBe('');
+	});
+});
+
+describe('ol', () => {
+	test('basic flat list', () => {
+		expect(ol(['first', 'second', 'third'])).toBe(
+			'1. first\n2. second\n3. third',
+		);
+	});
+
+	test('nested list with 3-space indent', () => {
+		expect(ol(['first', 'second', ['sub-a', 'sub-b'], 'third'])).toBe(
+			'1. first\n2. second\n   1. sub-a\n   2. sub-b\n3. third',
+		);
+	});
+
+	test('deeply nested list', () => {
+		expect(ol(['a', ['b', ['c']]])).toBe('1. a\n   1. b\n      1. c');
+	});
+
+	test('sub-array at index 0 treated as top-level items', () => {
+		expect(ol([['a', 'b']])).toBe('1. a\n2. b');
+	});
+
+	test('nested numbering restarts from 1', () => {
+		expect(ol(['a', 'b', ['x', 'y', 'z'], 'c'])).toBe(
+			'1. a\n2. b\n   1. x\n   2. y\n   3. z\n3. c',
+		);
+	});
+});
+
+describe('taskList', () => {
+	test('basic with checked and unchecked items', () => {
+		expect(taskList([[true, 'Done'], [false, 'Todo']])).toBe(
+			'- [x] Done\n- [ ] Todo',
+		);
+	});
+
+	test('all checked', () => {
+		expect(taskList([[true, 'A'], [true, 'B']])).toBe(
+			'- [x] A\n- [x] B',
+		);
+	});
+
+	test('all unchecked', () => {
+		expect(taskList([[false, 'A'], [false, 'B']])).toBe(
+			'- [ ] A\n- [ ] B',
+		);
+	});
+});
+
+describe('list composition', () => {
+	test('list items containing markdown', () => {
+		expect(ul([bold('item'), 'plain'])).toBe('- __item__\n- plain');
+	});
+});
+
+describe('ol nesting with 10+ items', () => {
+	test('nested item under item 10 renders as nested', () => {
+		const items = ['1', '2', '3', '4', '5', '6', '7', '8', '9', '10', ['nested'], '11'];
+		const html = render(ol(items));
+		// The nested item should be inside a sub-list, not a top-level <li>
+		expect(html).toContain('<ol>');
+		// With correct nesting, "nested" is inside a sub-<ol>
+		expect(html.match(/<ol>/g)?.length).toBeGreaterThanOrEqual(2);
+	});
+});
+
+describe('multiline list items', () => {
+	test('ul multiline item keeps content inside list', () => {
+		const html = render(ul(['line1\n# heading']));
+		expect(html).toContain('<ul>');
+		expect(html).toContain('<li>');
+		// Heading must be inside the list, not after it
+		const listEnd = html.indexOf('</ul>');
+		const headingPos = html.indexOf('heading');
+		expect(headingPos).toBeLessThan(listEnd);
+	});
+
+	test('ol multiline item keeps content inside list', () => {
+		const html = render(ol(['line1\n# heading']));
+		expect(html).toContain('<ol>');
+		expect(html).toContain('<li>');
+		const listEnd = html.indexOf('</ol>');
+		const headingPos = html.indexOf('heading');
+		expect(headingPos).toBeLessThan(listEnd);
+	});
+
+	test('taskList multiline item keeps content inside task item', () => {
+		const html = render(taskList([[false, 'line1\n- nested?']]));
+		// Content must stay inside the task list, not escape as a sibling
+		expect(html).toContain('checkbox');
+		expect(html).toContain('nested?');
+		// Only one top-level <ul>
+		expect(html.match(/<ul>/g)?.length).toBeLessThanOrEqual(2);
+	});
+
+	test('ul multiline preserves content', () => {
+		const html = render(ul(['first\nsecond']));
+		expect(html).toContain('first');
+		expect(html).toContain('second');
+	});
+});
+
+describe('taskList blank-line continuation', () => {
+	test('taskList with blank line does not create code block', () => {
+		const html = render(taskList([[false, 'line1\n\nline2']]));
+		expect(html).not.toContain('<pre>');
+		expect(html).not.toContain('<code>');
+		expect(html).toContain('line1');
+		expect(html).toContain('line2');
+	});
+});
+
+describe('list CR handling', () => {
+	test('ul with CR keeps content inside list', () => {
+		const html = render(ul(['a\r# h']));
+		expect(html).toContain('<ul>');
+		const listEnd = html.indexOf('</ul>');
+		const contentPos = html.lastIndexOf('h');
+		expect(contentPos).toBeLessThan(listEnd);
+	});
+
+	test('ol with CR keeps content inside list', () => {
+		const html = render(ol(['a\r# h']));
+		expect(html).toContain('<ol>');
+		const listEnd = html.indexOf('</ol>');
+		const contentPos = html.lastIndexOf('h');
+		expect(contentPos).toBeLessThan(listEnd);
+	});
+
+	test('taskList with CR keeps content inside list', () => {
+		const html = render(taskList([[false, 'a\r# h']]));
+		expect(html).toContain('<ul>');
+		const listEnd = html.indexOf('</ul>');
+		const contentPos = html.lastIndexOf('h');
+		expect(contentPos).toBeLessThan(listEnd);
+	});
+});
